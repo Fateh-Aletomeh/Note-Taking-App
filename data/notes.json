@@ -1,0 +1,23 @@
+{
+  "1": {
+    "name": "Note 1",
+    "content": "This is the content of note 1.",
+    "createdAt": "2025-03-04T12:00:00Z",
+    "lastModifiedAt": "2025-03-04T12:30:00Z",
+    "lastAccessedAt": "2025-03-04T12:45:00Z"
+  },
+  "2": {
+    "name": "Note 2",
+    "content": "This is the content of note 2.",
+    "createdAt": "2025-03-04T13:00:00Z",
+    "lastModifiedAt": "2025-03-04T13:10:00Z",
+    "lastAccessedAt": "2025-03-04T13:30:00Z"
+  },
+  "3": {
+    "name": "Note 2",
+    "content": "This is the content of note 3.",
+    "createdAt": "2025-03-04T13:00:00Z",
+    "lastModifiedAt": "2025-03-04T13:10:00Z",
+    "lastAccessedAt": "2025-03-04T13:30:00Z"
+  }
+}
