@@ -1,33 +1,60 @@
 package ucl.ac.uk.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.ArrayList;
 
 
 public class Model {
-  // Reads the json file and returns a map of id to name
-  public HashMap<Integer, String> readJson() {
-    HashMap<Integer, String> notesMap = new HashMap<>();
+  public void mkDir(String path, String dirname) {
+    new File(path, dirname).mkdirs();
+  }
 
+  public void createFile(String path, String filename) {
     try {
-      File jsonFile = new File("data/notes.json");
-      ObjectMapper objectMapper = new ObjectMapper();
-
-      Map<String, Object>[] notesArray = objectMapper.readValue(jsonFile, new TypeReference<Map<String, Object>[]>(){});
-      for (Map<String, Object> note : notesArray) {
-        System.out.println(note);
-        Integer id = (Integer) note.get("id");
-        String name = (String) note.get("name");
-        notesMap.put(id, name);
-      }
+      File newfile = new File("src/main/java/ucl/ac/uk/model/Notes" + path, filename);
+      newfile.createNewFile();
     } catch (IOException e) {
+      System.out.println("An error occurred when trying to create a new file.");
       e.printStackTrace();
     }
+  }
 
-    return notesMap;
+  public void renameFile(String dir, String filename, String newName) {
+    File file = new File("src/main/java/ucl/ac/uk/model/Notes/" + dir + "/" + filename);
+    File newfile = new File("src/main/java/ucl/ac/uk/model/Notes/" + dir + "/" + newName);
+    file.renameTo(newfile);
+  }
+
+  public ArrayList<String> getDirs() {
+    File root = new File("src/main/java/ucl/ac/uk/model/Notes");
+    ArrayList<String> dirs = new ArrayList<>();
+    File[] files = root.listFiles();
+
+    if (files != null) {
+      for (File file : files) {
+        if (file.isDirectory()) dirs.add(file.getName());
+      }
+    }
+
+    return dirs;
+  }
+
+  public ArrayList<String> getFiles(String dirName) {
+    File dir = new File("src/main/java/ucl/ac/uk/model/Notes/" + dirName);
+    ArrayList<String> filesList = new ArrayList<>();
+    File[] files = dir.listFiles();
+
+    if (files != null) {
+      for (File file : files) {
+        if (file.isFile()) {
+          String filename = file.getName();
+          filesList.add(filename.substring(0, filename.length() - 4));
+        }
+      }
+    }
+
+    return filesList;
   }
 }
