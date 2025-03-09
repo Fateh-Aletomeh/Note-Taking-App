@@ -25,3 +25,6 @@ war-file/
 
 # Notes folders and files
 /Notes
+
+# Tomcat files
+/tomcat.8080
