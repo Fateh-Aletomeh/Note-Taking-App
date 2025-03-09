@@ -6,7 +6,6 @@
 <head>
   <jsp:include page="/meta.jsp"/>
   <title>Files</title>
-  <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
   <div class="container main">
@@ -27,7 +26,11 @@
       %>
     </div>
     <div class="note">
-      
+      <form action="saveNote" method="post">
+        <textarea name="noteContent" rows="10" cols="50"></textarea>
+        <br>
+        <button type="submit">Save</button>
+      </form>
     </div>
   </div>
 </body>

@@ -22,9 +22,9 @@ public class FilesServlet extends HttpServlet {
     String dirName = request.getParameter("dir");
 
     // Code to use the model to process something would go here
-    Model notes = new Model();
-    ArrayList<String> files = notes.getFiles(dirName);
-    ArrayList<String> dirs = notes.getDirs();
+    Model model = new Model();
+    ArrayList<String> files = model.getFiles(dirName);
+    ArrayList<String> dirs = model.getDirs(dirName);
 
     // Add the data to request object that is sent to JSP
     request.setAttribute("files", files);
