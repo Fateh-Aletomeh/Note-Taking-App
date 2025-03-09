@@ -22,3 +22,6 @@ logfile.txt.lck
 
 # War files
 war-file/
+
+# Notes folders and files
+/Notes
