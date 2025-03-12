@@ -10,23 +10,26 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import ucl.ac.uk.model.Model;
+import ucl.ac.uk.model.DirHandler;
+import ucl.ac.uk.model.FileHandler;
 
 
 @WebServlet("/dirs")
 public class DirsServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-    // Recieve data from webpage
+    // Receive data from webpage
     String currDir = request.getQueryString();
     String dirName = request.getParameter("dir");
+    String fileName = request.getParameter("file");
 
     if (dirName == null) dirName = "";
-    if (currDir == null) {
-      currDir = "";
-    } else {
-      currDir = currDir.substring(4);
+    if (fileName == null) fileName = "";
+
+    currDir = (currDir == null) ? "" : currDir.substring(4);
+    int questionMarkIndex = currDir.indexOf('?');
+    if (questionMarkIndex != -1) {
+      currDir = currDir.substring(0, questionMarkIndex);
     }
 
     String prevDir;
@@ -44,15 +47,19 @@ public class DirsServlet extends HttpServlet {
     }
 
     // Code to use the model to process something would go here
-    Model model = new Model();
-    ArrayList<String> files = model.getFiles(dirName);
-    ArrayList<String> dirs = model.getDirs(dirName);
+    FileHandler filehandler = new FileHandler();
+    DirHandler dirhandler = new DirHandler();
+
+    ArrayList<String> files = filehandler.getFiles(dirName);
+    ArrayList<String> dirs = dirhandler.getDirs(dirName);
+    String fileContent = filehandler.readFile(dirName, fileName);
 
     // Add the data to request object that is sent to JSP
     request.setAttribute("files", files);
     request.setAttribute("dirs", dirs);
     request.setAttribute("prevDir", prevDir);
     request.setAttribute("currDir", currDir);
+    request.setAttribute("fileContent", fileContent);
 
     // Then forward to JSP
     ServletContext context = getServletContext();

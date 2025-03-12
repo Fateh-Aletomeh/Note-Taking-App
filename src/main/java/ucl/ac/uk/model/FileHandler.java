@@ -7,11 +7,7 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 
-public class Model {
-  public void mkDir(String dirname) {
-    new File("Notes", dirname).mkdirs();
-  }
-
+public class FileHandler {
   public void createFile(String path, String filename) {
     try {
       File newfile = new File("Notes/" + path, filename);
@@ -55,20 +51,6 @@ public class Model {
     } catch (IOException e) {
       System.out.println("An error occurred when trying to update the file.");
     }
-  }
-
-  public ArrayList<String> getDirs(String dirName) {
-    File root = new File("Notes/" + dirName);
-    ArrayList<String> dirsList = new ArrayList<>();
-    File[] files = root.listFiles();
-
-    if (files != null) {
-      for (File file : files) {
-        if (file.isDirectory()) dirsList.add(file.getName());
-      }
-    }
-
-    return dirsList;
   }
 
   public ArrayList<String> getFiles(String dirName) {

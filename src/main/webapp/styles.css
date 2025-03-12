@@ -1,13 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
 :root {
   --blue: #206a6a;
   --blue-lighter: #2a7e7e;
   --maroon: #6e3812;
+  --maroon-lighter: #8a4a1a;
   --redish: #842222;
 }
 
 body {
   color: whitesmoke;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: "Roboto", sans-serif;
   font-size: 18px;
   margin: 0;
 }
@@ -36,7 +39,7 @@ body {
   text-align: center;
 }
 
-#home a {
+.homebtn {
   background-color: var(--redish);
   margin: auto;
   padding: 20px;
@@ -52,16 +55,24 @@ body {
   padding: 10px;
 }
 
-.dirs > a {
-  background-color: var(--blue-lighter);
-}
-
 .dirs {
   background-color: var(--blue);
 }
 
+.dirs > a:hover {
+  background-color: var(--blue-lighter);
+}
+
 .files {
   background-color: var(--maroon);
+}
+
+.files > a:hover {
+ background-color: var(--maroon-lighter);
+}
+
+s:hover, button:hover {
+  transition: background-color 0.1s ease;
 }
 
 .note {
@@ -81,21 +92,32 @@ a {
   text-decoration: none;
 }
 
-a:hover {
-  text-decoration: underline;
-}
-
-.note button[type="submit"] {
-  background-color: var(--blue);
+button[type="submit"] {
   border: none;
   color: whitesmoke;
   cursor: pointer;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: "Roboto", sans-serif;
   font-size: 18px;
   margin-top: 20px;
   padding: 10px 20px;
 }
 
-.note button[type="submit"]:hover {
+.addDir {
+  background-color: var(--blue);
+}
+
+.addDir:hover {
   background-color: var(--blue-lighter);
+}
+
+.addFile {
+  background-color: var(--maroon);
+}
+
+.addFile:hover {
+  background-color: var(--maroon-lighter);
+}
+
+svg {
+  vertical-align: middle;
 }

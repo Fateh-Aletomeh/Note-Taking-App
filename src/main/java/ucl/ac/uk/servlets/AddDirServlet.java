@@ -11,7 +11,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import ucl.ac.uk.model.Model;
+import ucl.ac.uk.model.DirHandler;
+import ucl.ac.uk.model.FileHandler;
 
 
 @WebServlet("/AddDirServlet")
@@ -25,15 +26,16 @@ public class AddDirServlet extends HttpServlet {
     String dirName = request.getParameter("dirName");
 
     // Code to use the model to process something would go here
-    Model notes = new Model();
-    notes.mkDir(newDirName);
+    DirHandler dirhandler = new DirHandler();
+    FileHandler filehandler = new FileHandler();
+    dirhandler.mkDir(newDirName);
 
     if (dirName != null) {
-      ArrayList<String> files = notes.getFiles(dirName);
+      ArrayList<String> files = filehandler.getFiles(dirName);
       request.setAttribute("files", files);
     }
 
-    ArrayList<String> dirs = notes.getDirs(dirName);
+    ArrayList<String> dirs = dirhandler.getDirs(dirName);
     request.setAttribute("dirs", dirs);
 
     // Then forward to JSP

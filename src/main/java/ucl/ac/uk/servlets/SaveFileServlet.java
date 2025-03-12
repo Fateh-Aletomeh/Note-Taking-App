@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import ucl.ac.uk.model.Model;
+import ucl.ac.uk.model.FileHandler;
 
 
 @WebServlet("/SaveFileServlet")
@@ -21,6 +21,7 @@ public class SaveFileServlet extends HttpServlet {
 
     // Parse data
     String queryString = referer.split("\\?")[1];
+    queryString = java.net.URLDecoder.decode(queryString, "UTF-8");
     String[] params = queryString.split("&");
     String dir = null;
     String file = null;
@@ -35,8 +36,8 @@ public class SaveFileServlet extends HttpServlet {
     }
 
     // Code to use the model to process something would go here
-    Model notes = new Model();
-    notes.updateFile(dir, file, fileContent);
+    FileHandler filehandler = new FileHandler();
+    filehandler.updateFile(dir, file, fileContent);
 
     // Then return to webpage
     response.sendRedirect(referer);
