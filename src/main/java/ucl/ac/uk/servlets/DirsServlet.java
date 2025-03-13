@@ -21,7 +21,6 @@ public class DirsServlet extends HttpServlet {
     // Receive data from webpage
     String currDir = request.getParameter("dir");
     String currFile = request.getParameter("file");
-
     String prevDir;
 
     if (currDir.equals("Notes")) {
@@ -45,6 +44,7 @@ public class DirsServlet extends HttpServlet {
     request.setAttribute("dirs", dirs);
     request.setAttribute("prevDir", prevDir);
     request.setAttribute("currDir", currDir);
+    request.setAttribute("currFile", currFile);
     request.setAttribute("fileContent", fileContent);
 
     // Then forward to JSP

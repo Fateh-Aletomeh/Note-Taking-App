@@ -54,14 +54,43 @@
     </div>
     <div class="note">
       <%
+        String currDirName = currDir.contains("/") ? currDir.substring(currDir.lastIndexOf('/') + 1) : currDir;
+
+        if (!currDirName.equals("Notes")) {
+          out.println("<form action='rename' method='post'>"
+            + "<label for='newName'>Current directory: </label>"
+            + "<input type='text' id='newName' name='newName' value='" + currDirName + "'>"
+            + "<input type ='hidden' name='type' value='dir'>"
+            + "<button type='submit'>Rename</button>"
+            + "</form>"
+            + "<form action='delete' method='post'>"
+            + "<input type ='hidden' name='type' value='dir'>"
+            + "<button type='submit'>Delete</button>"
+            + "</form>");
+        } else {
+          out.println("<p>Current directory: Notes</p>");
+        }
+
+        String currFileName = (String) request.getAttribute("currFile");
         String fileContent = (String) request.getAttribute("fileContent");
-        
+
         if (fileContent != null) {
+          out.println("<form action='rename' method='post'>"
+            + "<label for='newName'>Current file: </label>"
+            + "<input type='text' id='newName' name='newName' value='" + currFileName + "'>"
+            + "<input type ='hidden' name='type' value='file'>"
+            + "<button type='submit'>Rename</button>"
+            + "</form>"
+            + "<form action='delete' method='post'>"
+            + "<input type ='hidden' name='type' value='file'>"
+            + "<button type='submit'>Delete</button>"
+            + "</form>");
+
           out.println("<form action='SaveFileServlet' method='post'>"
-                    + "<textarea name='noteContent' rows='10' cols='50'>" + fileContent + "</textarea>"
-                    + "<br>"
-                    + "<button type='submit' class='addDir'>Save</button>"
-                    + "</form>");
+            + "<textarea name='noteContent' rows='10' cols='50'>" + fileContent + "</textarea>"
+            + "<br>"
+            + "<button type='submit' class='addDir'>Save</button>"
+            + "</form>");
         }
       %>
     </div>

@@ -6,8 +6,34 @@ import java.util.ArrayList;
 
 public class DirHandler {
   public void createDir(String dir, String newdirname) {
-    System.out.println(dir + "," + newdirname);
     new File(dir, newdirname).mkdirs();
+  }
+
+  public void deleteDir(String dir) {
+    File directory = new File(dir);
+    if (directory.exists() && directory.isDirectory()) {
+      deleteRecursively(directory);
+    }
+  }
+
+  private void deleteRecursively(File file) {
+    File[] allContents = file.listFiles();
+    if (allContents != null) {
+      for (File f : allContents) {
+        deleteRecursively(f);
+      }
+    }
+    file.delete();
+  }
+
+  public void renameDir(String dir, String oldDirName, String newDirName) {
+    File oldDir = new File(dir, oldDirName);
+    File newDir = new File(dir, newDirName);
+    if (oldDir.exists() && oldDir.isDirectory()) {
+      oldDir.renameTo(newDir);
+    } else {
+      System.out.println("Directory does not exist: " + oldDirName);
+    }
   }
 
   public ArrayList<String> getDirs(String dirName) {

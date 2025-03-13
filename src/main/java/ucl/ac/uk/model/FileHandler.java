@@ -18,9 +18,14 @@ public class FileHandler {
     }
   }
 
+  public void deleteFile(String dir, String filename) {
+    File file = new File(dir + "/" + filename + ".txt");
+    file.delete();
+  }
+
   public void renameFile(String dir, String filename, String newName) {
-    File file = new File(dir + "/" + filename);
-    File newfile = new File(dir + "/" + newName);
+    File file = new File(dir + "/" + filename + ".txt");
+    File newfile = new File(dir + "/" + newName + ".txt");
     file.renameTo(newfile);
   }
 
@@ -64,7 +69,6 @@ public class FileHandler {
       for (File file : files) {
         if (file.isFile()) {
           String filename = file.getName();
-          System.out.println(filename);
           filesList.add(filename.substring(0, filename.length() - 4));  // Remove .txt from filename
         }
       }
