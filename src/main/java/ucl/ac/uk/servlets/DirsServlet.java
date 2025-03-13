@@ -19,40 +19,26 @@ public class DirsServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     // Receive data from webpage
-    String currDir = request.getQueryString();
-    String dirName = request.getParameter("dir");
-    String fileName = request.getParameter("file");
-
-    if (dirName == null) dirName = "";
-    if (fileName == null) fileName = "";
-
-    currDir = (currDir == null) ? "" : currDir.substring(4);
-    int questionMarkIndex = currDir.indexOf('?');
-    if (questionMarkIndex != -1) {
-      currDir = currDir.substring(0, questionMarkIndex);
-    }
+    String currDir = request.getParameter("dir");
+    String currFile = request.getParameter("file");
 
     String prevDir;
-    if (currDir.isEmpty()) {  // This means we are in the Notes directory
+
+    if (currDir.equals("Notes")) {
       prevDir = null;
-    } else if (!currDir.contains("/")) {  // This means we are in a directory whose parent is Notes
-      prevDir = "";
+    } else if (currDir.matches("^[^/]+/[^/]+$")) {
+      prevDir = "Notes";
     } else {
-      int lastSlashIndex = currDir.lastIndexOf('/', currDir.length() - 2);
-      if (lastSlashIndex == -1) {
-        prevDir = "";
-      } else {
-        prevDir = currDir.substring(0, lastSlashIndex + 1);
-      }
+      prevDir = currDir.substring(0, currDir.lastIndexOf('/'));
     }
 
     // Code to use the model to process something would go here
     FileHandler filehandler = new FileHandler();
     DirHandler dirhandler = new DirHandler();
 
-    ArrayList<String> files = filehandler.getFiles(dirName);
-    ArrayList<String> dirs = dirhandler.getDirs(dirName);
-    String fileContent = filehandler.readFile(dirName, fileName);
+    ArrayList<String> files = filehandler.getFiles(currDir);
+    ArrayList<String> dirs = dirhandler.getDirs(currDir);
+    String fileContent = filehandler.readFile(currDir, currFile);
 
     // Add the data to request object that is sent to JSP
     request.setAttribute("files", files);

@@ -6,11 +6,11 @@ import java.util.ArrayList;
 
 public class DirHandler {
   public void mkDir(String dirname) {
-    new File("Notes", dirname).mkdirs();
+    new File(dirname).mkdirs();
   }
 
   public ArrayList<String> getDirs(String dirName) {
-    File root = new File("Notes/" + dirName);
+    File root = new File(dirName);
     ArrayList<String> dirsList = new ArrayList<>();
     File[] files = root.listFiles();
 

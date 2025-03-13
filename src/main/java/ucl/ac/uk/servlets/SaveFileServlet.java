@@ -31,7 +31,7 @@ public class SaveFileServlet extends HttpServlet {
       if (keyValue[0].equals("dir")) {
         dir = keyValue[1];
       } else if (keyValue[0].equals("file")) {
-        file = keyValue[1] + ".txt";
+        file = keyValue[1];
       }
     }
 
