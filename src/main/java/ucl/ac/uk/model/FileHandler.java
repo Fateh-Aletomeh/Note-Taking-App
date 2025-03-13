@@ -13,7 +13,7 @@ public class FileHandler {
       File newfile = new File(path, filename + ".txt");
       newfile.createNewFile();
     } catch (IOException e) {
-      System.out.println("An error occurred when trying to create a new file.");
+      System.out.println("An error occurred when trying to create a new file at: " + path + " called:" + filename + ".txt");
       e.printStackTrace();
     }
   }
@@ -36,7 +36,8 @@ public class FileHandler {
       }
       scanner.close();
     } catch (IOException e) {
-      System.out.println("An error occurred when trying to read the file.");
+      System.out.println("An error occurred when trying to read the file: " + dir + "/" + filename + ".txt");
+      e.printStackTrace();
     }
 
     return content.toString();
@@ -49,7 +50,8 @@ public class FileHandler {
       writer.write(content);
       writer.close();
     } catch (IOException e) {
-      System.out.println("An error occurred when trying to update the file.");
+      System.out.println("An error occurred when trying to update the file: " + dir + "/" + filename + ".txt");
+      e.printStackTrace();
     }
   }
 

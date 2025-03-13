@@ -36,10 +36,9 @@ public class AddFileServlet extends HttpServlet {
     String fileName = request.getParameter("noteName");
     String fileContent = request.getParameter("noteContent");
 
-    System.out.println(referer);
-
     // Parse data
     String dir = referer.substring(referer.indexOf("dir=") + 4);
+    dir = java.net.URLDecoder.decode(dir, "UTF-8");
 
     // Code to use the model to process something would go here
     FileHandler filehandler = new FileHandler();

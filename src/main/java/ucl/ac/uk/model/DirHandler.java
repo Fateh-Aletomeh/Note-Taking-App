@@ -5,8 +5,9 @@ import java.util.ArrayList;
 
 
 public class DirHandler {
-  public void mkDir(String dirname) {
-    new File(dirname).mkdirs();
+  public void createDir(String dir, String newdirname) {
+    System.out.println(dir + "," + newdirname);
+    new File(dir, newdirname).mkdirs();
   }
 
   public ArrayList<String> getDirs(String dirName) {
