@@ -9,13 +9,14 @@
 }
 
 body {
-  color: whitesmoke;
+  background-color: linen;
+  color: linen;
   font-family: "Roboto", sans-serif;
   font-size: 18px;
   margin: 0;
 }
 
-.container {
+.cont {
   display: grid;
 }
 
@@ -41,8 +42,10 @@ body {
 
 .homebtn {
   background-color: var(--redish);
+  color: whitesmoke;
   margin: auto;
   padding: 20px;
+  text-decoration: none;
   width: 50%;
 }
 
@@ -55,28 +58,13 @@ body {
   padding: 10px;
 }
 
-.dirs {
-  background-color: var(--blue);
-}
-
-.dirs > a:hover {
-  background-color: var(--blue-lighter);
-}
-
-.files {
-  background-color: var(--maroon);
-}
-
-.files > a:hover {
- background-color: var(--maroon-lighter);
-}
-
-s:hover, button:hover {
-  transition: background-color 0.1s ease;
+.dirs, .files {
+  /* background-color: var(--blue); */
+  border-right: 1px solid var(--maroon);
 }
 
 .note {
-  background-color: linen;
+  /* background-color: linen; */
   color: black;
 }
 
@@ -87,38 +75,17 @@ s:hover, button:hover {
   width: 99%;
 }
 
-a {
-  color: whitesmoke;
-  display: block;
-  text-decoration: none;
-}
-
-button[type="submit"] {
-  border: none;
-  color: whitesmoke;
-  cursor: pointer;
-  font-family: "Roboto", sans-serif;
-  font-size: 18px;
-  margin-top: 20px;
-  padding: 10px 20px;
-}
-
-.addDir {
-  background-color: var(--blue);
-}
-
-.addDir:hover {
-  background-color: var(--blue-lighter);
-}
-
-.addFile {
-  background-color: var(--maroon);
-}
-
-.addFile:hover {
-  background-color: var(--maroon-lighter);
-}
-
 svg {
+  margin-right: 5px;
   vertical-align: middle;
+}
+
+.allnotes {
+  background-color: var(--blue);
+  font-size: 16px;
+}
+
+.noteslist > div {
+  background-color: var(--blue-lighter);
+  border: 2px solid linen;
 }

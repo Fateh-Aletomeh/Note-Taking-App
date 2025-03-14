@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 
 public class DirHandler {
+  Indexer indexer = new Indexer();
+
   public void createDir(String dir, String newdirname) {
     new File(dir, newdirname).mkdirs();
   }
@@ -14,6 +16,7 @@ public class DirHandler {
     if (directory.exists() && directory.isDirectory()) {
       deleteRecursively(directory);
     }
+    indexer.removeNotesFromDir(dir);
   }
 
   private void deleteRecursively(File file) {
@@ -31,6 +34,7 @@ public class DirHandler {
     File newDir = new File(dir, newDirName);
     if (oldDir.exists() && oldDir.isDirectory()) {
       oldDir.renameTo(newDir);
+      indexer.renameDirs(oldDirName, newDirName, dir);
     } else {
       System.out.println("Directory does not exist: " + oldDirName);
     }

@@ -7,7 +7,7 @@
   <title>Notes</title>
 </head>
 <body>
-  <div class="container main" id="home">
+  <div class="cont main" id="home">
     <div>
       <h1>Create new note</h1>
       <p>Note will be created in the following directory: </p>
@@ -19,15 +19,17 @@
 
       <form action="addFile" method="post">
         <label for="noteName">Name:</label>
+        <br>
         <input type="text" id="noteName" name="noteName" required>
         <br>
         <label for="noteContent">Content:</label>
+        <br>
         <textarea id="noteContent" name="noteContent" rows="4" cols="50" required></textarea>
         <br>
-        <input type="submit" value="Create Note">
+        <button type="submit" class="btn btn-primary mt-3">Create Note</button>
       </form>
 
-      <a href="dirs?dir=<%= dir %>" class="btn btn-secondary">Cancel</a>
+      <a href="dirs?dir=<%= dir %>" class="btn btn-secondary mt-3">Cancel</a>
     </div>
   </div>
 </body>

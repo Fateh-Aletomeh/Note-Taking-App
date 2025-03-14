@@ -7,7 +7,7 @@
   <title>Notes</title>
 </head>
 <body>
-  <div class="container main" id="home">
+  <div class="cont main" id="home">
     <div>
       <h1>Create new directory</h1>
       <p>Directory will be created in the following directory: </p>
@@ -19,12 +19,13 @@
 
       <form action="addDir" method="post">
         <label for="dirName">Name:</label>
+        <br>
         <input type="text" id="dirName" name="dirName" required>
         <br>
-        <input type="submit" value="Create Directory">
+        <button type="submit" class="btn btn-primary mt-3">Create Directory</button>
       </form>
 
-      <a href="dirs?dir=<%= dir %>" class="btn btn-secondary">Cancel</a>
+      <a href="dirs?dir=<%= dir %>" class="btn btn-secondary mt-3">Cancel</a>
     </div>
   </div>
 </body>
