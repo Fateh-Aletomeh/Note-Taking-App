@@ -57,15 +57,15 @@
     </div>
     <div class="note">
       <div class="w-100 text-center mb-3">
-        <a href="/allNotes" class="btn btn-warning">View all notes</a>
+        <a href="/allNotes?sort=asc" class="btn btn-warning">View all notes</a>
       </div>
 
       <%
         String currDirName = currDir.contains("/") ? currDir.substring(currDir.lastIndexOf('/') + 1) : currDir;
 
         if (!currDirName.equals("Notes")) {
-            out.println("<form action='rename' method='post' class='d-inline-block me-2 mb-2'>"
-            + "<label for='newName' class='form-label me-2'>Current directory: " + currDir + "</label>"
+          out.println("<form action='rename' method='post' class='d-inline-block me-2 mb-2'>"
+            + "<label for='newName' class='form-label me-2'><b>Current directory: </b>" + currDir + "</label>"
             + "<input type='text' id='newName' name='newName' value='" + currDirName + "' class='form-control d-inline-block w-auto me-2'>"
             + "<input type ='hidden' name='type' value='dir'>"
             + "<button type='submit' class='btn btn-primary me-2'>Rename</button>"
@@ -75,7 +75,7 @@
             + "<button type='submit' class='btn btn-danger'>Delete</button>"
             + "</form>");
         } else {
-          out.println("<p>Current directory: Notes</p>");
+          out.println("<p><b>Current directory:</b> Notes</p>");
         }
 
         out.println("<br>");
@@ -83,8 +83,8 @@
         String fileContent = (String) request.getAttribute("fileContent");
 
         if (fileContent != null) {
-            out.println("<form action='rename' method='post' class='d-inline-block me-2 mb-2'>"
-            + "<label for='newName' class='form-label me-2'>Current file: " + currFileName + "</label>"
+          out.println("<form action='rename' method='post' class='d-inline-block me-2 mb-2'>"
+            + "<label for='newName' class='form-label me-2'><b>Current file: </b>" + currFileName + "</label>"
             + "<input type='text' id='newName' name='newName' value='" + currFileName + "' class='form-control d-inline-block w-auto me-2'>"
             + "<input type ='hidden' name='type' value='file'>"
             + "<button type='submit' class='btn btn-primary me-2'>Rename</button>"
@@ -94,10 +94,63 @@
             + "<button type='submit' class='btn btn-danger'>Delete</button>"
             + "</form>");
 
-            out.println("<form action='SaveFileServlet' method='post'>"
-            + "<textarea name='noteContent' rows='10' cols='50' class='form-control mb-2'>" + fileContent + "</textarea>"
+          out.println("<form action='SaveFileServlet' method='post'>"
+            + "<textarea name='noteContent' rows='10' cols='40' class='form-control mb-2'>" + fileContent + "</textarea>"
             + "<button type='submit' class='btn btn-success'>Save</button>"
             + "</form><br>");
+        }
+
+        ArrayList<String> tagsYes = (ArrayList<String>) request.getAttribute("tagsYes");
+        ArrayList<String> tagsNo = (ArrayList<String>) request.getAttribute("tagsNo");
+      %>
+
+      <%
+        if (currFileName != null) {
+      %>
+      <div class="tags">
+        <div class="row mb-3">
+          <div class="col">
+        <p><b>Tags in Note:</b></p>
+        <%
+          if (tagsYes != null) {
+            for (String tag : tagsYes) {
+              out.println("<form action='/noteTag' method='post' class='d-inline-block me-2 mb-2'>"
+              + "<span class='badge bg-primary'>" + tag + "</span>"
+              + "<input type='hidden' name='tagName' value='" + tag + "'>"
+              + "<input type='hidden' name='action' value='remove'>"
+              + "<input type='hidden' name='filename' value='" + currFileName + "'>"
+              + "<input type='hidden' name='dir' value='" + currDir + "'>"
+              + "<button type='submit' class='btn btn-danger btn-sm ms-1'>x</button>"
+              + "</form>");
+            }
+          }
+        %>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+        <p><b>Tags not in Note:</b></p>
+        <%
+          if (tagsNo != null) {
+            for (String tag : tagsNo) {
+              out.println("<form action='/noteTag' method='post' class='d-inline-block me-2 mb-2'>"
+              + "<span class='badge bg-secondary p-2'>" + tag + "</span>"
+              + "<input type='hidden' name='tagName' value='" + tag + "'>"
+              + "<input type='hidden' name='action' value='add'>"
+              + "<input type='hidden' name='filename' value='" + currFileName + "'>"
+              + "<input type='hidden' name='dir' value='" + currDir + "'>"
+              + "<button type='submit' class='btn btn-success btn-sm ms-1 p-2'>+</button>"
+              + "</form>");
+            }
+          }
+        %>
+        <div class="w-100 text-center mt-3">
+          <a href="/createNewTag" class="btn btn-primary">Create New Tag</a>
+        </div>
+          </div>
+        </div>
+      </div>
+      <%
         }
       %>
     </div>

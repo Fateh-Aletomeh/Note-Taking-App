@@ -6,6 +6,7 @@
 <%@ page import="java.text.ParseException" %>
 <%@ page import="java.util.TimeZone" %>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,6 +21,13 @@
       <input type="text" name="query" class="form-control d-inline-block" style="width: auto; display: inline-block;" placeholder="Search notes...">
       <button type="submit" class="btn btn-secondary">Search</button>
     </form>
+    <br><br>
+    <div class="btn-group" role="group" aria-label="Sort options">
+      <a href="?sort=asc" class="btn btn-primary">Alphabetically Ascending</a>
+      <a href="?sort=desc" class="btn btn-primary">Alphabetically Descending</a>
+      <a href="?sort=recent" class="btn btn-primary">Recently Added</a>
+      <a href="?sort=oldest" class="btn btn-primary">Oldest Added</a>
+    </div>
   </nav>
 
   <div class="noteslist container mt-5">
@@ -53,11 +61,17 @@
 
           out.println("<div class='card mb-3'>");
           out.println("<div class='card-body'>");
-          out.println("<h4 class='card-title'>" + note.get("name") + "</h4>");
-          out.println("<p class='card-text'><strong>Directory:</strong> " + note.get("path") + "</p>");
-          out.println("<p class='card-text'><strong>Date Created:</strong> " + readableFormat.format(createdDate) + "</p>");
-          out.println("<p class='card-text'><strong>Last Updated:</strong> " + readableFormat.format(updatedDate) + "</p>");
-          out.println("<a href='dirs?dir=" + note.get("path") + "&file=" + note.get("name") + "' class='btn btn-info'>Open Note</a>");
+            out.println("<div class='row'>");
+            out.println("<div class='col-md-6'>");
+            out.println("<h4 class='card-title'>" + note.get("name") + "</h4>");
+            out.println("<p class='card-text'><strong>Directory:</strong> " + note.get("path") + "</p>");
+            out.println("</div>");
+            out.println("<div class='col-md-6'>");
+            out.println("<p class='card-text'><strong>Date Created:</strong> " + readableFormat.format(createdDate) + "</p>");
+            out.println("<p class='card-text'><strong>Last Updated:</strong> " + readableFormat.format(updatedDate) + "</p>");
+            out.println("</div>");
+            out.println("</div>");
+          out.println("<br><a href='dirs?dir=" + note.get("path") + "&file=" + note.get("name") + "' class='btn btn-info'>Open Note</a>");
           out.println("</div>");
           out.println("</div>");
         }

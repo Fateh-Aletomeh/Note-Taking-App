@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ucl.ac.uk.model.DirHandler;
 import ucl.ac.uk.model.FileHandler;
+import ucl.ac.uk.model.Indexer;
 
 
 @WebServlet("/dirs")
@@ -22,6 +23,8 @@ public class DirsServlet extends HttpServlet {
     String currDir = request.getParameter("dir");
     String currFile = request.getParameter("file");
     String prevDir;
+    ArrayList<String> tagsYes = null;
+    ArrayList<String> tagsNo = null;
 
     if (currDir.equals("Notes")) {
       prevDir = null;
@@ -34,10 +37,16 @@ public class DirsServlet extends HttpServlet {
     // Code to use the model to process something would go here
     FileHandler filehandler = new FileHandler();
     DirHandler dirhandler = new DirHandler();
+    Indexer indexer = new Indexer();
 
     ArrayList<String> files = filehandler.getFiles(currDir);
     ArrayList<String> dirs = dirhandler.getDirs(currDir);
     String fileContent = filehandler.readFile(currDir, currFile);
+
+    if (currFile != null) {
+      tagsYes = indexer.getTags(currFile, currDir);
+      tagsNo = indexer.getOtherTags(tagsYes);
+    }
 
     // Add the data to request object that is sent to JSP
     request.setAttribute("files", files);
@@ -46,6 +55,8 @@ public class DirsServlet extends HttpServlet {
     request.setAttribute("currDir", currDir);
     request.setAttribute("currFile", currFile);
     request.setAttribute("fileContent", fileContent);
+    request.setAttribute("tagsYes", tagsYes);
+    request.setAttribute("tagsNo", tagsNo);
 
     // Then forward to JSP
     ServletContext context = getServletContext();

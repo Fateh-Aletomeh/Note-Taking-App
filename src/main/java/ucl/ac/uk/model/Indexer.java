@@ -17,13 +17,28 @@ public class Indexer {
   File file = new File("Index/index.json");
   ObjectNode index;
   ArrayNode notes;
+  ArrayNode tags;
   
   public Indexer() {
     try {
       index = (ObjectNode) mapper.readTree(file);
       notes = (ArrayNode) index.get("notes");
+      tags = (ArrayNode) index.get("tags");
     } catch (IOException e) {
       System.out.println("Error when trying to read index");
+      e.printStackTrace();
+    }
+  }
+
+  private boolean matchesNote(ObjectNode note, String name, String path) {
+    return note.get("name").asText().equals(name) && note.get("path").asText().equals(path);
+  }
+
+  private void writeChangesToIndex() {
+    try {
+      mapper.writerWithDefaultPrettyPrinter().writeValue(file, index);
+    } catch (IOException e) {
+      System.out.println("Error when trying to make changes to index");
       e.printStackTrace();
     }
   }
@@ -53,29 +68,18 @@ public class Indexer {
     newNote.set("tags", tagsNode);
     notes.add(newNote);
 
-    try {
-      mapper.writerWithDefaultPrettyPrinter().writeValue(file, index);
-    } catch (IOException e) {
-      System.out.println("Error when trying to add note to index");
-      e.printStackTrace();
-    }
+    writeChangesToIndex();
   }
 
   public void removeNote(String name, String path) {
     for (int i = 0; i < notes.size(); i++) {
       ObjectNode note = (ObjectNode) notes.get(i);
-      if (note.get("name").asText().equals(name) && note.get("path").asText().equals(path)) {
+      if (matchesNote(note, name, path)) {
         notes.remove(i);
         break;
       }
     }
-
-    try {
-      mapper.writerWithDefaultPrettyPrinter().writeValue(file, index);
-    } catch (IOException e) {
-      System.out.println("Error when trying to remove note from index");
-      e.printStackTrace();
-    }
+    writeChangesToIndex();
   }
 
   public void removeNotesFromDir(String dir) {
@@ -86,13 +90,7 @@ public class Indexer {
         i--;
       }
     }
-
-    try {
-      mapper.writerWithDefaultPrettyPrinter().writeValue(file, index);
-    } catch (IOException e) {
-      System.out.println("Error when trying to remove notes from directory in index");
-      e.printStackTrace();
-    }
+    writeChangesToIndex();
   }
 
   public void renameDirs(String oldName, String newName, String parentDir) {
@@ -106,47 +104,111 @@ public class Indexer {
         note.put("path", newPath);
       }
     }
-
-    try {
-      mapper.writerWithDefaultPrettyPrinter().writeValue(file, index);
-    } catch (IOException e) {
-      System.out.println("Error when trying to rename directories in index");
-      e.printStackTrace();
-    }
+    writeChangesToIndex();
   }
 
   public void renameNote(String oldName, String newName, String path) {
     for (int i = 0; i < notes.size(); i++) {
       ObjectNode note = (ObjectNode) notes.get(i);
-      if (note.get("name").asText().equals(oldName) && note.get("path").asText().equals(path)) {
+      if (matchesNote(note, oldName, path)) {
         note.put("name", newName);
         note.put("updated_at", DateTimeFormatter.ISO_INSTANT.format(Instant.now()));
         break;
       }
     }
-
-    try {
-      mapper.writerWithDefaultPrettyPrinter().writeValue(file, index);
-    } catch (IOException e) {
-      System.out.println("Error when trying to rename note in index");
-      e.printStackTrace();
-    }
+    writeChangesToIndex();
   }
 
   public void updateTime(String name, String path) {
     for (int i = 0; i < notes.size(); i++) {
       ObjectNode note = (ObjectNode) notes.get(i);
-      if (note.get("name").asText().equals(name) && note.get("path").asText().equals(path)) {
+      if (matchesNote(note, name, path)) {
         note.put("updated_at", DateTimeFormatter.ISO_INSTANT.format(Instant.now()));
         break;
       }
     }
+    writeChangesToIndex();
+  }
 
-    try {
-      mapper.writerWithDefaultPrettyPrinter().writeValue(file, index);
-    } catch (IOException e) {
-      System.out.println("Error when trying to rename note in index");
-      e.printStackTrace();
+  public void addTag(String tag) {
+    if (!tags.has(tag)) {
+      tags.add(tag);
+      writeChangesToIndex();
     }
+  }
+
+  public void removeTag(String tag) {
+    for (int i = 0; i < notes.size(); i++) {
+      ObjectNode note = (ObjectNode) notes.get(i);
+      ArrayNode tagsNode = (ArrayNode) note.get("tags");
+      for (int j = 0; j < tagsNode.size(); j++) {
+        if (tagsNode.get(j).asText().equals(tag)) {
+          tagsNode.remove(j);
+          j--;
+        }
+      }
+      note.set("tags", tagsNode);
+    }
+
+    for (int i = 0; i < tags.size(); i++) {
+      if (tags.get(i).asText().equals(tag)) {
+        tags.remove(i);
+        break;
+      }
+    }
+    writeChangesToIndex();
+  }
+
+  public void addTagToNote(String name, String path, String tag) {
+    for (int i = 0; i < notes.size(); i++) {
+      ObjectNode note = (ObjectNode) notes.get(i);
+      if (matchesNote(note, name, path)) {
+        ArrayNode tagsNode = (ArrayNode) note.get("tags");
+        tagsNode.add(tag);
+        note.set("tags", tagsNode);
+      }
+    }
+    writeChangesToIndex();
+  }
+
+  public void removeTagFromNote(String name, String path, String tag) {
+    for (int i = 0; i < notes.size(); i++) {
+      ObjectNode note = (ObjectNode) notes.get(i);
+      if (matchesNote(note, name, path)) {
+        ArrayNode tagsNode = (ArrayNode) note.get("tags");
+        for (int j = 0; j < tagsNode.size(); j++) {
+          if (tagsNode.get(j).asText().equals(tag)) {
+            tagsNode.remove(j);
+            break;
+          }
+        }
+        note.set("tags", tagsNode);
+      }
+    }
+    writeChangesToIndex();
+  }
+
+  public ArrayList<String> getTags(String name, String path) {
+    ArrayList<String> noteTags = new ArrayList<>();
+    for (int i = 0; i < notes.size(); i++) {
+      ObjectNode note = (ObjectNode) notes.get(i);
+      if (matchesNote(note, name, path)) {
+        ArrayNode tagsNode = (ArrayNode) note.get("tags");
+        tagsNode.forEach(tag -> noteTags.add(tag.asText()));
+        break;
+      }
+    }
+    return noteTags;
+  }
+
+  public ArrayList<String> getOtherTags(ArrayList<String> notesTags) {
+    ArrayList<String> otherTags = new ArrayList<>();
+    for (int i = 0; i < tags.size(); i++) {
+      String tag = tags.get(i).asText();
+      if (!notesTags.contains(tag)) {
+        otherTags.add(tag);
+      }
+    }
+    return otherTags;
   }
 }

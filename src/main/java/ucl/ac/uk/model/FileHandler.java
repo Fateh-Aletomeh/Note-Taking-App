@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.nio.file.Files;
+import java.util.HashMap;
 
 
 public class FileHandler {
@@ -84,39 +84,16 @@ public class FileHandler {
     return filesList;
   }
 
-  public ArrayList<String> searchFiles(String query) {
-    ArrayList<String> result = new ArrayList<>();
-    File notesDir = new File("Notes");
+  public ArrayList<HashMap<String, String>> searchFiles(String query) {
+    ArrayList<HashMap<String, String>> result = new ArrayList<>();
+    ArrayList<HashMap<String, String>> allNotes = indexer.getAllNotes();
 
-    searchDirectory(notesDir, query, result);
-
-    return result;
-  }
-
-  private void searchDirectory(File dir, String query, ArrayList<String> result) {
-    File[] files = dir.listFiles();
-
-    if (files != null) {
-      for (File file : files) {
-        if (file.isDirectory()) {
-          searchDirectory(file, query, result);
-        } else if (file.isFile()) {
-          String filename = file.getName();
-          if (filename.contains(query) || fileContainsQuery(file, query)) {
-            result.add(file.getPath());
-          }
-        }
+    for (HashMap<String, String> note : allNotes) {
+      if (note.get("name").contains(query) || readFile(note.get("path"), note.get("name")).contains(query)) {
+        result.add(note);
       }
     }
-  }
 
-  private boolean fileContainsQuery(File file, String query) {
-    try {
-      String content = new String(Files.readAllBytes(file.toPath()));
-      return content.contains(query);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return false;
+    return result;
   }
 }
