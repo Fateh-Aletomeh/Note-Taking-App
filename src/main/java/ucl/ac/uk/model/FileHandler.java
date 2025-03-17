@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public class FileHandler {
@@ -14,10 +13,14 @@ public class FileHandler {
   public void createFile(String path, String filename) {
     try {
       File newfile = new File(path, filename + ".txt");
+      if (newfile.exists()) {
+        System.out.println("File already exists at: " + path + " called: " + filename + ".txt");
+        return;
+      }
       newfile.createNewFile();
       indexer.addNote(filename, path, null);
     } catch (IOException e) {
-      System.out.println("An error occurred when trying to create a new file at: " + path + " called:" + filename + ".txt");
+      System.out.println("An error occurred when trying to create a new file at: " + path + " called: " + filename + ".txt");
       e.printStackTrace();
     }
   }
@@ -26,14 +29,18 @@ public class FileHandler {
     File file = new File(dir + "/" + filename + ".txt");
     file.delete();
     indexer.removeNote(filename, dir);
-  }
+    }
 
-  public void renameFile(String dir, String filename, String newName) {
+    public void renameFile(String dir, String filename, String newName) {
     File file = new File(dir + "/" + filename + ".txt");
     File newfile = new File(dir + "/" + newName + ".txt");
+    if (newfile.exists()) {
+      System.out.println("File with the new name already exists at: " + dir + " called: " + newName + ".txt");
+      return;
+    }
     file.renameTo(newfile);
     indexer.renameNote(filename, newName, dir);
-  }
+    }
 
   public String readFile(String dir, String filename) {
     if (filename == null) return null;
@@ -84,12 +91,13 @@ public class FileHandler {
     return filesList;
   }
 
-  public ArrayList<HashMap<String, String>> searchFiles(String query) {
-    ArrayList<HashMap<String, String>> result = new ArrayList<>();
-    ArrayList<HashMap<String, String>> allNotes = indexer.getAllNotes();
+  public ArrayList<Note> searchFiles(String query) {
+    ArrayList<Note> result = new ArrayList<>();
+    ArrayList<Note> allNotes = indexer.getAllNotes();
+    System.out.println(allNotes);
 
-    for (HashMap<String, String> note : allNotes) {
-      if (note.get("name").contains(query) || readFile(note.get("path"), note.get("name")).contains(query)) {
+    for (Note note : allNotes) {
+      if (note.getName().contains(query) || readFile(note.getPath(), note.getName()).contains(query)) {
         result.add(note);
       }
     }

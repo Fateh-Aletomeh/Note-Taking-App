@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.ArrayList" %>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,7 +58,7 @@
     </div>
     <div class="note">
       <div class="w-100 text-center mb-3">
-        <a href="/allNotes?sort=asc" class="btn btn-warning">View all notes</a>
+        <a href="/allNotes?query=&sort=asc" class="btn btn-warning">View all notes</a>
       </div>
 
       <%
@@ -129,24 +130,25 @@
         </div>
         <div class="row">
           <div class="col">
-        <p><b>Tags not in Note:</b></p>
-        <%
-          if (tagsNo != null) {
-            for (String tag : tagsNo) {
-              out.println("<form action='/noteTag' method='post' class='d-inline-block me-2 mb-2'>"
-              + "<span class='badge bg-secondary p-2'>" + tag + "</span>"
-              + "<input type='hidden' name='tagName' value='" + tag + "'>"
-              + "<input type='hidden' name='action' value='add'>"
-              + "<input type='hidden' name='filename' value='" + currFileName + "'>"
-              + "<input type='hidden' name='dir' value='" + currDir + "'>"
-              + "<button type='submit' class='btn btn-success btn-sm ms-1 p-2'>+</button>"
-              + "</form>");
-            }
-          }
-        %>
-        <div class="w-100 text-center mt-3">
-          <a href="/createNewTag" class="btn btn-primary">Create New Tag</a>
-        </div>
+            <p><b>Tags not in Note:</b></p>
+            <%
+              if (tagsNo != null) {
+                for (String tag : tagsNo) {
+                  out.println("<form action='/noteTag' method='post' class='d-inline-block me-2 mb-2'>"
+                  + "<span class='badge bg-secondary p-2'>" + tag + "</span>"
+                  + "<input type='hidden' name='tagName' value='" + tag + "'>"
+                  + "<input type='hidden' name='action' value='add'>"
+                  + "<input type='hidden' name='filename' value='" + currFileName + "'>"
+                  + "<input type='hidden' name='dir' value='" + currDir + "'>"
+                  + "<button type='submit' class='btn btn-success btn-sm ms-1 p-2'>+</button>"
+                  + "</form>");
+                }
+              }
+            %>
+            <div class="w-100 text-center mt-3">
+              <a href="/createNewTag" class="btn btn-primary me-2">Create New Tag</a>
+              <a href="/removeTag" class="btn btn-danger">Remove Tags</a>
+            </div>
           </div>
         </div>
       </div>

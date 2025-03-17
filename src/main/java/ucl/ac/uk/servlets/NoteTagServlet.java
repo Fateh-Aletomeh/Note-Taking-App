@@ -22,10 +22,6 @@ public class NoteTagServlet extends HttpServlet {
     String filename = request.getParameter("filename");
     String dir = request.getParameter("dir");
 
-    System.out.println(tagName);
-    System.out.println(filename);
-    System.out.println(dir);
-
     // Code to use the model to process something would go here
     Indexer indexer = new Indexer();
     if (action.equals("add")) {

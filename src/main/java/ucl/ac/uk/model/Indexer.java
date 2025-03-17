@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.io.File;
 import java.io.IOException;
 
@@ -18,7 +17,7 @@ public class Indexer {
   ObjectNode index;
   ArrayNode notes;
   ArrayNode tags;
-  
+
   public Indexer() {
     try {
       index = (ObjectNode) mapper.readTree(file);
@@ -30,8 +29,8 @@ public class Indexer {
     }
   }
 
-  private boolean matchesNote(ObjectNode note, String name, String path) {
-    return note.get("name").asText().equals(name) && note.get("path").asText().equals(path);
+  private boolean matchesNote(Note note, String name, String path) {
+    return note.getName().equals(name) && note.getPath().equals(path);
   }
 
   private void writeChangesToIndex() {
@@ -43,37 +42,45 @@ public class Indexer {
     }
   }
 
-  public ArrayList<HashMap<String, String>> getAllNotes() {
-    ArrayList<HashMap<String, String>> noteList = new ArrayList<>();
+  public ArrayList<String> getAllTags() {
+    ArrayList<String> tagList = new ArrayList<>();
+    for (int i = 0; i < tags.size(); i++) {
+      tagList.add(tags.get(i).asText());
+    }
+    return tagList;
+  }
+
+  public ArrayList<Note> getAllNotes() {
+    ArrayList<Note> noteList = new ArrayList<>();
     for (int i = 0; i < notes.size(); i++) {
-      ObjectNode note = (ObjectNode) notes.get(i);
-      HashMap<String, String> noteMap = new HashMap<>();
-      note.fields().forEachRemaining(entry -> noteMap.put(entry.getKey(), entry.getValue().asText()));
-      noteList.add(noteMap);
+      ObjectNode noteNode = (ObjectNode) notes.get(i);
+      Note note = mapper.convertValue(noteNode, Note.class);
+      noteList.add(note);
     }
     return noteList;
   }
 
   public void addNote(String name, String path, ArrayList<String> tags) {
-    ObjectNode newNote = mapper.createObjectNode();
-    newNote.put("name", name);
-    newNote.put("path", path);
+    Note newNote = new Note();
+    newNote.setName(name);
+    newNote.setPath(path);
 
     String createdAt = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
-    newNote.put("created_at", createdAt);
-    newNote.put("updated_at", createdAt);  // Since updated_at is same as created_at when file is created
-    
-    ArrayNode tagsNode = mapper.createArrayNode();
-    if (tags != null) tags.forEach(tagsNode::add);
-    newNote.set("tags", tagsNode);
-    notes.add(newNote);
+    newNote.setCreatedAt(createdAt);
+    newNote.setUpdatedAt(createdAt);  // Since updated_at is same as created_at when file is created
+
+    if (tags == null) {
+      tags = new ArrayList<>();
+    }
+    newNote.setTags(tags);
+    notes.add(mapper.convertValue(newNote, ObjectNode.class));
 
     writeChangesToIndex();
   }
 
-  public void removeNote(String name, String path) {
+    public void removeNote(String name, String path) {
     for (int i = 0; i < notes.size(); i++) {
-      ObjectNode note = (ObjectNode) notes.get(i);
+      Note note = mapper.convertValue(notes.get(i), Note.class);
       if (matchesNote(note, name, path)) {
         notes.remove(i);
         break;
@@ -84,8 +91,8 @@ public class Indexer {
 
   public void removeNotesFromDir(String dir) {
     for (int i = 0; i < notes.size(); i++) {
-      ObjectNode note = (ObjectNode) notes.get(i);
-      if (note.get("path").asText().startsWith(dir)) {
+      Note note = mapper.convertValue(notes.get(i), Note.class);
+      if (note.getPath().startsWith(dir)) {
         notes.remove(i);
         i--;
       }
@@ -95,13 +102,12 @@ public class Indexer {
 
   public void renameDirs(String oldName, String newName, String parentDir) {
     for (int i = 0; i < notes.size(); i++) {
-      ObjectNode note = (ObjectNode) notes.get(i);
-      String notePath = note.get("path").asText();
-      System.out.println(parentDir + "/" + oldName);
+      Note note = mapper.convertValue(notes.get(i), Note.class);
+      String notePath = note.getPath();
       if (notePath.startsWith(parentDir + "/" + oldName)) {
-        System.out.println(note.get("name"));
         String newPath = notePath.replaceFirst(parentDir + "/" + oldName, parentDir + "/" + newName);
-        note.put("path", newPath);
+        note.setPath(newPath);
+        notes.set(i, mapper.convertValue(note, ObjectNode.class));
       }
     }
     writeChangesToIndex();
@@ -109,10 +115,11 @@ public class Indexer {
 
   public void renameNote(String oldName, String newName, String path) {
     for (int i = 0; i < notes.size(); i++) {
-      ObjectNode note = (ObjectNode) notes.get(i);
+      Note note = mapper.convertValue(notes.get(i), Note.class);
       if (matchesNote(note, oldName, path)) {
-        note.put("name", newName);
-        note.put("updated_at", DateTimeFormatter.ISO_INSTANT.format(Instant.now()));
+        note.setName(newName);
+        note.setUpdatedAt(DateTimeFormatter.ISO_INSTANT.format(Instant.now()));
+        notes.set(i, mapper.convertValue(note, ObjectNode.class));
         break;
       }
     }
@@ -121,9 +128,10 @@ public class Indexer {
 
   public void updateTime(String name, String path) {
     for (int i = 0; i < notes.size(); i++) {
-      ObjectNode note = (ObjectNode) notes.get(i);
+      Note note = mapper.convertValue(notes.get(i), Note.class);
       if (matchesNote(note, name, path)) {
-        note.put("updated_at", DateTimeFormatter.ISO_INSTANT.format(Instant.now()));
+        note.setUpdatedAt(DateTimeFormatter.ISO_INSTANT.format(Instant.now()));
+        notes.set(i, mapper.convertValue(note, ObjectNode.class));
         break;
       }
     }
@@ -131,7 +139,14 @@ public class Indexer {
   }
 
   public void addTag(String tag) {
-    if (!tags.has(tag)) {
+    boolean tagExists = false;
+    for (int i = 0; i < tags.size(); i++) {
+      if (tags.get(i).asText().equals(tag)) {
+        tagExists = true;
+        break;
+      }
+    }
+    if (!tagExists) {
       tags.add(tag);
       writeChangesToIndex();
     }
@@ -139,15 +154,13 @@ public class Indexer {
 
   public void removeTag(String tag) {
     for (int i = 0; i < notes.size(); i++) {
-      ObjectNode note = (ObjectNode) notes.get(i);
-      ArrayNode tagsNode = (ArrayNode) note.get("tags");
-      for (int j = 0; j < tagsNode.size(); j++) {
-        if (tagsNode.get(j).asText().equals(tag)) {
-          tagsNode.remove(j);
-          j--;
-        }
+      Note note = mapper.convertValue(notes.get(i), Note.class);
+      ArrayList<String> noteTags = note.getTags();
+      if (noteTags != null && noteTags.contains(tag)) {
+        noteTags.remove(tag);
+        note.setTags(noteTags);
+        notes.set(i, mapper.convertValue(note, ObjectNode.class));
       }
-      note.set("tags", tagsNode);
     }
 
     for (int i = 0; i < tags.size(); i++) {
@@ -161,11 +174,15 @@ public class Indexer {
 
   public void addTagToNote(String name, String path, String tag) {
     for (int i = 0; i < notes.size(); i++) {
-      ObjectNode note = (ObjectNode) notes.get(i);
+      Note note = mapper.convertValue(notes.get(i), Note.class);
       if (matchesNote(note, name, path)) {
-        ArrayNode tagsNode = (ArrayNode) note.get("tags");
-        tagsNode.add(tag);
-        note.set("tags", tagsNode);
+        ArrayList<String> noteTags = note.getTags();
+        if (noteTags == null) {
+          noteTags = new ArrayList<>();
+        }
+        noteTags.add(tag);
+        note.setTags(noteTags);
+        notes.set(i, mapper.convertValue(note, ObjectNode.class));
       }
     }
     writeChangesToIndex();
@@ -173,16 +190,14 @@ public class Indexer {
 
   public void removeTagFromNote(String name, String path, String tag) {
     for (int i = 0; i < notes.size(); i++) {
-      ObjectNode note = (ObjectNode) notes.get(i);
+      Note note = mapper.convertValue(notes.get(i), Note.class);
       if (matchesNote(note, name, path)) {
-        ArrayNode tagsNode = (ArrayNode) note.get("tags");
-        for (int j = 0; j < tagsNode.size(); j++) {
-          if (tagsNode.get(j).asText().equals(tag)) {
-            tagsNode.remove(j);
-            break;
-          }
+        ArrayList<String> noteTags = note.getTags();
+        if (noteTags != null && noteTags.contains(tag)) {
+          noteTags.remove(tag);
+          note.setTags(noteTags);
+          notes.set(i, mapper.convertValue(note, ObjectNode.class));
         }
-        note.set("tags", tagsNode);
       }
     }
     writeChangesToIndex();
@@ -191,10 +206,9 @@ public class Indexer {
   public ArrayList<String> getTags(String name, String path) {
     ArrayList<String> noteTags = new ArrayList<>();
     for (int i = 0; i < notes.size(); i++) {
-      ObjectNode note = (ObjectNode) notes.get(i);
+      Note note = mapper.convertValue(notes.get(i), Note.class);
       if (matchesNote(note, name, path)) {
-        ArrayNode tagsNode = (ArrayNode) note.get("tags");
-        tagsNode.forEach(tag -> noteTags.add(tag.asText()));
+        noteTags = note.getTags();
         break;
       }
     }
@@ -210,5 +224,17 @@ public class Indexer {
       }
     }
     return otherTags;
+  }
+
+  public ArrayList<Note> filterBasedOnTags(ArrayList<Note> searchedNotes, ArrayList<String> tags) {
+    if (tags == null) return searchedNotes;
+    ArrayList<Note> filteredNotes = new ArrayList<>();
+    for (Note note : searchedNotes) {
+      ArrayList<String> noteTags = note.getTags();
+      if (noteTags != null && noteTags.containsAll(tags)) {
+        filteredNotes.add(note);
+      }
+    }
+    return filteredNotes;
   }
 }

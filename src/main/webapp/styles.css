@@ -89,3 +89,7 @@ svg {
   background-color: var(--blue-lighter);
   border: 2px solid linen;
 }
+
+#allTags {
+  justify-content: center;
+}

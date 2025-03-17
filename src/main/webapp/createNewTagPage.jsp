@@ -23,7 +23,7 @@
         <button type="submit" class="btn btn-primary mt-3">Create Tag</button>
       </form>
 
-      <a href="referer" class="btn btn-secondary mt-3">Cancel</a>
+      <a href="<%= referer %>" class="btn btn-secondary mt-3">Cancel</a>
     </div>
   </div>
 </body>

@@ -8,7 +8,11 @@ public class DirHandler {
   Indexer indexer = new Indexer();
 
   public void createDir(String dir, String newdirname) {
-    new File(dir, newdirname).mkdirs();
+    File newDir = new File(dir, newdirname);
+    if (newDir.exists()) {
+      return;
+    }
+    newDir.mkdirs();
   }
 
   public void deleteDir(String dir) {
@@ -27,11 +31,15 @@ public class DirHandler {
       }
     }
     file.delete();
-  }
+    }
 
   public void renameDir(String dir, String oldDirName, String newDirName) {
     File oldDir = new File(dir, oldDirName);
     File newDir = new File(dir, newDirName);
+    if (newDir.exists()) {
+      System.out.println("Directory already exists: " + newDirName);
+      return;
+    }
     if (oldDir.exists() && oldDir.isDirectory()) {
       oldDir.renameTo(newDir);
       indexer.renameDirs(oldDirName, newDirName, dir);
